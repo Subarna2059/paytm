@@ -17,7 +17,15 @@ const validation = zod.object({
 router.post("/signup", async (req,res)=>{
     // console.log(req.body);
 
-    validation.safeParse(req.body);
+    const parsedBody = validation.safeParse(req.body);
+    // if (!parsedBody.success) {
+    //     return res.status(400).json({
+    //         message: "Invalid request body",
+    //         errors: parsedBody.error.errors,
+    //     });
+    // }
+    const { firstName, lastName, email, password } = parsedBody.data;
+    console.log(firstName, lastName, email, password);
     const existingUser = await userModel.findOne({
         email:req.body.email
     })
@@ -28,10 +36,10 @@ router.post("/signup", async (req,res)=>{
     };
 
     const insertUser = await userModel.create({
-        firstName:req.body.firstName,
-        lastName:req.body.lastName,
-        email:req.body.email,
-        password:req.body.password,
+        firstName, 
+        lastName, 
+        email, 
+        password
     })
     // insertUser.save();
     if ( insertUser ) {
