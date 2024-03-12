@@ -15,35 +15,35 @@ const validation = zod.object({
 })
 
 router.post("/signup", async (req,res)=>{
-    console.log(req.body);
+    // console.log(req.body);
 
-    // validation.safeParse(req.body);
-    // const existingUser = await userModel.findOne({
-    //     email:req.body.email
-    // })
-    // if(existingUser) {
-    //     return res.status(411).json({
-    //         message:"Email already taken"
-    //     })
-    // };
+    validation.safeParse(req.body);
+    const existingUser = await userModel.findOne({
+        email:req.body.email
+    })
+    if(existingUser) {
+        return res.status(411).json({
+            message:"Email already taken"
+        })
+    };
 
-    // const insertUser = await userModel.create({
-    //     firstName:req.body.firstName,
-    //     lastName:req.body.lastName,
-    //     email:req.body.email,
-    //     password:req.body.password,
-    // })
-    // // insertUser.save();
-    // if ( insertUser ) {
-    //     const token = jwt.sign(insertUser._id,insertUser);
-    //     res.status(200).json({
-    //         message: insertUser._id + "User created successfully",
-    //         token:token,
-    // })
-    // }
-    // res.status(411).json({
-    //     message:"Error occured",
-    // })
+    const insertUser = await userModel.create({
+        firstName:req.body.firstName,
+        lastName:req.body.lastName,
+        email:req.body.email,
+        password:req.body.password,
+    })
+    // insertUser.save();
+    if ( insertUser ) {
+        const token = jwt.sign(insertUser._id,insertUser);
+        res.status(200).json({
+            message: insertUser._id + "User created successfully",
+            token:token,
+    })
+    }
+    res.status(411).json({
+        message:"Error occured",
+    })
 })
 
 
