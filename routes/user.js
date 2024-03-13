@@ -6,6 +6,8 @@ const router = express.Router();
 const { userModel } = require("../db")
 const app = express();
 app.use(bodyParser.json());
+app.use(express.json())
+const { JWT_SECRET } = require("../config");
 
 const validation = zod.object({
     firstName: zod.string(),
@@ -15,15 +17,14 @@ const validation = zod.object({
 })
 
 router.post("/signup", async (req,res)=>{
-    // console.log(req.body);
-
+    console.log(req.body);
     const parsedBody = validation.safeParse(req.body);
-    // if (!parsedBody.success) {
-    //     return res.status(400).json({
-    //         message: "Invalid request body",
-    //         errors: parsedBody.error.errors,
-    //     });
-    // }
+    if (!parsedBody.success) {
+        return res.status(400).json({
+            message: "Invalid request body",
+            errors: parsedBody.error.errors,
+        });
+    }
     const { firstName, lastName, email, password } = parsedBody.data;
     console.log(firstName, lastName, email, password);
     const existingUser = await userModel.findOne({
@@ -43,7 +44,7 @@ router.post("/signup", async (req,res)=>{
     })
     // insertUser.save();
     if ( insertUser ) {
-        const token = jwt.sign(insertUser._id,insertUser);
+        const token = jwt.sign(insertUser._id,JWT_SECRET);
         res.status(200).json({
             message: insertUser._id + "User created successfully",
             token:token,
